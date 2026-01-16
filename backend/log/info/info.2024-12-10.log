@@ -1,0 +1,8 @@
+2024-12-10 00:29:07.677 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 01:29:07.679 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 02:29:07.684 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 03:29:07.679 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 04:29:07.678 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 05:29:07.677 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 06:29:07.680 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user
+2024-12-10 07:29:07.687 febs [scheduling-1] INFO  cc.mrbird.febs.common.task.CacheTask - delete expired user

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cc.mrbird.febs.cos.dao.ChatRecordMapper">
+
+    <!-- 根据对应聊天方ID获取沟通联系人列表 -->
+    <select id="getContactsByHotelId" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT cr.user_id          as         userId,
+                        cr.to_user_id       AS         hotelId,
+                        ui.name             as         userName,
+                        ui.images           as         userImages,
+                        MAX(cr.create_time) as         lastMessageTime,
+                        (SELECT content
+                         FROM chat_record cr2
+                         WHERE cr2.to_user_id = cr.to_user_id
+                           AND cr2.to_user_id = #{hotelId}
+                         ORDER BY cr2.create_time DESC LIMIT 1) as lastMessage
+        FROM chat_record cr
+            LEFT JOIN user_info ui
+        ON cr.user_id = ui.id
+        WHERE cr.to_user_id = #{hotelId}
+        GROUP BY cr.user_id
+        ORDER BY lastMessageTime DESC
+    </select>
+
+    <!-- 根据用户ID获取沟通联系人列表 -->
+    <select id="getContactsByUserId" resultType="java.util.LinkedHashMap">
+        SELECT DISTINCT
+            cr.to_user_id       as hotelId,
+            cr.user_id          as userId,
+            CASE
+                WHEN cr.user_id = #{userId} THEN hi.name
+                ELSE ui.name
+                END as contactName,
+            CASE
+                WHEN cr.user_id = #{userId} THEN hi.images
+                ELSE ui.images
+                END as contactImage,
+            CASE
+                WHEN cr.user_id = #{userId} THEN hi.user_id
+                ELSE ui.user_id
+                END as contactUserId,
+            MAX(cr.create_time) as lastMessageTime,
+            (SELECT content
+             FROM chat_record cr2
+             WHERE (cr2.user_id = #{userId} AND cr2.to_user_id = cr.to_user_id)
+                OR (cr2.to_user_id = #{userId} AND cr2.user_id = cr.to_user_id)
+             ORDER BY cr2.create_time DESC
+                                   LIMIT 1) as lastMessage
+        FROM chat_record cr
+            LEFT JOIN user_info hi ON cr.to_user_id = hi.id
+            LEFT JOIN user_info ui ON cr.user_id = ui.id
+        WHERE (cr.user_id = #{userId} OR cr.to_user_id = #{userId})
+        GROUP BY
+            CASE
+            WHEN cr.user_id = #{userId} THEN cr.to_user_id
+            ELSE cr.user_id
+        END
+        ORDER BY lastMessageTime DESC
+    </select>
+
+
+
+    <!-- 根据用户ID获取沟通联系人列表 -->
+    <select id="getListByUserAndHotel" resultType="java.util.LinkedHashMap">
+        SELECT cr.ID,
+               cr.user_id,
+               cr.to_user_id,
+               cr.sender_type,
+               cr.content,
+               cr.create_time,
+               cr.STATUS,
+               cr.is_deleted,
+               hi.user_id AS hotelUserId,
+               ui.user_id as studentId
+        FROM chat_record cr
+                 LEFT JOIN user_info hi
+                           ON cr.to_user_id = hi.id
+                 LEFT JOIN user_info ui
+                           ON cr.user_id = ui.id
+        WHERE cr.user_id = #{userId}
+            AND cr.to_user_id = #{hotelId}
+           OR cr.user_id = #{hotelId}
+            AND cr.to_user_id = #{userId}
+        ORDER BY cr.create_time ASC;
+    </select>
+</mapper>
