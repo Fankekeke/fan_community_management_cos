@@ -8,7 +8,7 @@
 <!--              <img src="../../../static/img/logo1.png" style="height: 100px;">-->
 <!--            </a-col>-->
             <a-col :span="24">
-              <div style="text-align: center;font-size: 23px;margin-bottom: 10px;font-family: SimHei;margin-top: 30px;color: #669802">旅游博客智能系统</div>
+              <div style="text-align: center;font-size: 23px;margin-bottom: 10px;font-family: SimHei;margin-top: 30px;color: #980284">智能粉丝社群数字化运营平台</div>
             </a-col>
           </a-row>
         </div>
@@ -55,7 +55,7 @@ export default {
     flex-direction: column;
     height: 100vh;
     overflow: auto;
-    background-color: #e9f8e7;
+    background-color: #e3e3e3;
     background-repeat: repeat-x, repeat;
     .content {
       padding: 32px 0;

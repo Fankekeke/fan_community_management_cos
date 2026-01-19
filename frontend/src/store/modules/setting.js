@@ -12,7 +12,7 @@ export default {
     isMobile: false,
     theme: db.get('THEME', 'light'),
     layout: db.get('LAYOUT', 'side'),
-    systemName: '旅游博客智能系统',
+    systemName: '智能粉丝社群数字化运营平台',
     copyright: `${new Date().getFullYear()} <a>FanK</a>`,
     multipage: getBooleanValue(db.get('MULTIPAGE'), true),
     fixSiderbar: getBooleanValue(db.get('FIX_SIDERBAR'), true),

@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 public interface ClothesInfoMapper extends BaseMapper<ClothesInfo> {
 
     /**
-     * 分页查询独家信息信息
+     * 分页查询官方动态信息
      *
      * @param page
      * @param clothesInfo

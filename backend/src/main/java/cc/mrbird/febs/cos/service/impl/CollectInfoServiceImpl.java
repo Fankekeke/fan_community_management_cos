@@ -1,7 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.entity.CollectInfo;
 import cc.mrbird.febs.cos.dao.CollectInfoMapper;
+import cc.mrbird.febs.cos.entity.CollectInfo;
 import cc.mrbird.febs.cos.service.ICollectInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

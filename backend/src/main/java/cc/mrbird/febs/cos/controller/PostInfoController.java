@@ -1,7 +1,6 @@
 package cc.mrbird.febs.cos.controller;
 
 
-import cc.mrbird.febs.common.exception.FebsException;
 import cc.mrbird.febs.common.service.CacheService;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.*;
@@ -10,17 +9,24 @@ import cc.mrbird.febs.system.domain.User;
 import cc.mrbird.febs.system.service.UserService;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.dashscope.aigc.generation.Generation;
+import com.alibaba.dashscope.aigc.generation.GenerationParam;
+import com.alibaba.dashscope.aigc.generation.GenerationResult;
+import com.alibaba.dashscope.common.Message;
+import com.alibaba.dashscope.common.Role;
+import com.alibaba.dashscope.exception.InputRequiredException;
+import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author FanK
@@ -46,6 +52,9 @@ public class PostInfoController {
 
     private final IUserInfoService userInfoService;
 
+    @Resource
+    private Generation generation;
+
     /**
      * 分页获取系统用户信息
      *
@@ -56,6 +65,17 @@ public class PostInfoController {
     @GetMapping("/user/page")
     public R userPage(Page page, User user) {
         return R.ok(postInfoService.selectUserPage(page, user));
+    }
+
+    /**
+     * 获取用户详情
+     *
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @GetMapping("/user/detail")
+    public R queryUserDetail(Integer userId) {
+        return R.ok(postInfoService.queryUserDetail(userId));
     }
 
     /**
@@ -107,6 +127,17 @@ public class PostInfoController {
     }
 
     /**
+     * 获取模块下的贴子
+     *
+     * @param tagId
+     * @return
+     */
+    @GetMapping("/tagByUser")
+    public R getPostByTagUser(Integer tagId, Integer userId) {
+        return R.ok(postInfoService.getPostByTagUser(tagId, userId));
+    }
+
+    /**
      * 获取贴子详细信息
      *
      * @param postId
@@ -137,6 +168,16 @@ public class PostInfoController {
     @GetMapping("/list/{key}")
     public R list(@PathVariable("key") String key) {
         return R.ok(postInfoService.postByKey(key));
+    }
+
+    /**
+     * 模糊查询帖子信息
+     *
+     * @return
+     */
+    @GetMapping("/listByUser")
+    public R listByUser(String key, Integer userId) {
+        return R.ok(postInfoService.listByUser(key, userId));
     }
 
     /**
@@ -173,6 +214,12 @@ public class PostInfoController {
     @Transactional(rollbackFor = Exception.class)
     public R save(PostInfo postInfo) {
         String check = this.contentCheck(postInfo.getContent());
+        String key = "请根据以下数据生成一份文章内容审查报告：" + postInfo.getContent() + "，100字以内";
+        String contentMessage = queryContent(key);
+        postInfo.setAiRemark(contentMessage);
+        if (SensitiveWordHelper.contains(postInfo.getContent())) {
+            postInfo.setContent(SensitiveWordHelper.replace(postInfo.getContent()));
+        }
         if (StrUtil.isNotEmpty(check)) {
             return R.error(500, check);
         } else {
@@ -192,6 +239,38 @@ public class PostInfoController {
             postInfo.setPageviews(0);
             return R.ok(postInfoService.save(postInfo));
         }
+    }
+
+    public String queryContent(String key) {
+        Message userMessage = Message.builder()
+                .role(Role.USER.getValue())
+                .content(key)
+                .build();
+        GenerationParam param = GenerationParam.builder()
+                //指定用于对话的通义千问模型名
+                .model("qwen-plus")
+                .messages(Arrays.asList(userMessage))
+                //
+                .resultFormat(GenerationParam.ResultFormat.MESSAGE)
+                //生成过程中核采样方法概率阈值，例如，取值为0.8时，仅保留概率加起来大于等于0.8的最可能token的最小集合作为候选集。
+                // 取值范围为（0,1.0)，取值越大，生成的随机性越高；取值越低，生成的确定性越高。
+                .topP(0.8)
+                //阿里云控制台DASHSCOPE获取的api-key
+                .apiKey("sk-ebb4821588054a66aa1951d7f239f77c")
+                //启用互联网搜索，模型会将搜索结果作为文本生成过程中的参考信息，但模型会基于其内部逻辑“自行判断”是否使用互联网搜索结果。
+                .enableSearch(true)
+                .build();
+        GenerationResult generationResult = null;
+        try {
+            generationResult = generation.call(param);
+        } catch (NoApiKeyException | InputRequiredException e) {
+            throw new RuntimeException(e);
+        }
+        List<String> allContents = generationResult.getOutput().getChoices().stream()
+                .map(choice -> choice.getMessage().getContent())
+                .collect(Collectors.toList());
+
+        return String.join("\n---\n", allContents);
     }
 
     /**

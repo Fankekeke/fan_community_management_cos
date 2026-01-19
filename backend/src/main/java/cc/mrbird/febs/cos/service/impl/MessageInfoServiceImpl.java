@@ -1,7 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.entity.MessageInfo;
 import cc.mrbird.febs.cos.dao.MessageInfoMapper;
+import cc.mrbird.febs.cos.entity.MessageInfo;
 import cc.mrbird.febs.cos.service.IMessageInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

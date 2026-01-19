@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="新增景区推荐" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="新增官方动态" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -11,7 +11,7 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='景区推荐标题' v-bind="formItemLayout">
+          <a-form-item label='官方动态标题' v-bind="formItemLayout">
             <a-input v-decorator="[
             'title',
             { rules: [{ required: true, message: '请输入名称!' }] }
@@ -27,7 +27,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="24">
-          <a-form-item label='景区推荐内容' v-bind="formItemLayout">
+          <a-form-item label='官方动态内容' v-bind="formItemLayout">
             <a-textarea :rows="6" v-decorator="[
             'content',
              { rules: [{ required: true, message: '请输入名称!' }] }

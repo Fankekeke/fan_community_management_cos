@@ -1,4 +1,4 @@
-2026-01-02 23:01:22.768 febs [main] INFO  cc.mrbird.febs.FebsApplication - Starting FebsApplication on WIN-KJDA35RA4FP with PID 16724 (started by Administrator in G:\Project\20260102智能旅游博客系统\smart_travel_blog_cos\backend)
+2026-01-02 23:01:22.768 febs [main] INFO  cc.mrbird.febs.FebsApplication - Starting FebsApplication on WIN-KJDA35RA4FP with PID 16724 (started by Administrator in G:\Project\20260115智能粉丝社群数字化运营平台\smart_travel_blog_cos\backend)
 2026-01-02 23:01:22.806 febs [main] INFO  cc.mrbird.febs.FebsApplication - No active profile set, falling back to default profiles: default
 2026-01-02 23:01:23.657 febs [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
 2026-01-02 23:01:23.659 febs [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.

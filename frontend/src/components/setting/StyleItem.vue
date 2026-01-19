@@ -28,7 +28,7 @@ export default {
       padding-top: 15px;
       padding-left: 24px;
       height: 100%;
-      color: #669802;
+      color: #980284;
       font-size: 14px;
       font-weight: bold;
     }

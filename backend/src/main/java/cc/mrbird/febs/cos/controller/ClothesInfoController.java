@@ -24,7 +24,7 @@ public class ClothesInfoController {
     private final IClothesInfoService clothesInfoService;
 
     /**
-     * 分页查询独家信息信息
+     * 分页查询官方动态信息
      *
      * @param page
      * @param clothesInfo
@@ -41,7 +41,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 新增独家信息信息
+     * 新增官方动态信息
      *
      * @param clothesInfo
      * @return
@@ -53,7 +53,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 修改独家信息信息
+     * 修改官方动态信息
      *
      * @param clothesInfo
      * @return
@@ -64,7 +64,7 @@ public class ClothesInfoController {
     }
 
     /**
-     * 删除独家信息信息
+     * 删除官方动态信息
      *
      * @param ids
      * @return

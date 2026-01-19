@@ -1,5 +1,5 @@
 <template>
-  <div :class="[multipage === true ? 'multi-page':'single-page', 'not-menu-page', 'home-page']" style="background-color: #e9f8e7; border: none">
+  <div :class="[multipage === true ? 'multi-page':'single-page', 'not-menu-page', 'home-page']" style="background-color: #e3e3e3; border: none">
     <a-row v-if="newsList.length > 0" style="width: 65%;margin: 0 auto;margin-bottom: 15px">
       <a-col :span="22">
         <a-alert
@@ -19,7 +19,7 @@
         </a-carousel>
       </a-col>
       <a-col :span="7">
-        <a-card hoverable :loading="loading" :bordered="false" title="景区推荐" style="height: 550px;overflow: auto">
+        <a-card hoverable :loading="loading" :bordered="false" title="官方动态" style="height: 550px;overflow: auto">
           <div style="padding: 0 22px">
             <a-list item-layout="vertical" :pagination="false" :data-source="bulletinList">
               <a-list-item slot="renderItem" key="item.title" slot-scope="item, index">
@@ -597,7 +597,7 @@ export default {
 </script>
 <style lang="less">
 .home-page {
-  background: linear-gradient(135deg, #e9f8e7 0%, #d4f1d1 100%);
+  background: linear-gradient(135deg, #e3e3e3 0%, #e3e3e3 100%);
   min-height: 100vh;
   padding: 20px 0;
 
@@ -622,7 +622,7 @@ export default {
     }
   }
 
-  // 景区推荐卡片
+  // 官方动态卡片
   .scenic-recommend-card {
     height: 550px;
     overflow-y: auto;

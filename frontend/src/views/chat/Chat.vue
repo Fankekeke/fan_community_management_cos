@@ -1,6 +1,6 @@
 
 <template>
-  <div class="chat-container" style="margin-top: 15px;width: 65%;margin: 0 auto">
+  <div class="chat-container" style="margin-top: 25px;width: 65%;margin: 0 auto">
     <!-- 左侧联系人列表 -->
     <div class="contacts-panel">
       <div class="panel-header">

@@ -2,7 +2,6 @@ package cc.mrbird.febs.cos.controller;
 
 
 import cc.mrbird.febs.common.utils.R;
-import cc.mrbird.febs.cos.entity.CollectInfo;
 import cc.mrbird.febs.cos.entity.FocusInfo;
 import cc.mrbird.febs.cos.service.IFocusInfoService;
 import cn.hutool.core.date.DateUtil;

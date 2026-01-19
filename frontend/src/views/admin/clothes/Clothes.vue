@@ -133,7 +133,7 @@ export default {
         scopedSlots: { customRender: 'titleShow' },
         width: 300
       }, {
-        title: '景区推荐内容',
+        title: '官方动态内容',
         dataIndex: 'content',
         scopedSlots: { customRender: 'contentShow' },
         width: 600
@@ -195,7 +195,7 @@ export default {
     },
     handleclothesAddSuccess () {
       this.clothesAdd.visiable = false
-      this.$message.success('新增景区推荐成功')
+      this.$message.success('新增官方动态成功')
       this.search()
     },
     edit (record) {
@@ -207,7 +207,7 @@ export default {
     },
     handleclothesEditSuccess () {
       this.clothesEdit.visiable = false
-      this.$message.success('修改景区推荐成功')
+      this.$message.success('修改官方动态成功')
       this.search()
     },
     handleDeptChange (value) {

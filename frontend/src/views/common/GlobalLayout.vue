@@ -12,7 +12,7 @@
       <a-layout-content :style="{minHeight: minHeight, margin: '20px 14px 0'}" :class="fixHeader ? 'fixed-header-content' : null">
         <slot></slot>
       </a-layout-content>
-      <a-layout-footer style="padding: .29rem 0;background-color: #e9f8e7;" class="copyright">
+      <a-layout-footer style="padding: .29rem 0;background-color: #e3e3e3;" class="copyright">
         <global-footer :copyright="copyright"/>
       </a-layout-footer>
     </a-layout>
@@ -85,7 +85,7 @@ export default {
 
 <style lang="less" scoped>
   .setting{
-    background-color: #669802;
+    background-color: #980284;
     color: #fff;
     border-radius: 5px 0 0 5px;
     line-height: 40px;

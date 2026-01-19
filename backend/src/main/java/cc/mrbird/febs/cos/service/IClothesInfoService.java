@@ -4,7 +4,6 @@ import cc.mrbird.febs.cos.entity.ClothesInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.LinkedHashMap;
 
@@ -14,7 +13,7 @@ import java.util.LinkedHashMap;
 public interface IClothesInfoService extends IService<ClothesInfo> {
 
     /**
-     * 分页查询独家信息信息
+     * 分页查询官方动态信息
      *
      * @param page
      * @param clothesInfo

@@ -1,7 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.entity.ClothesInfo;
 import cc.mrbird.febs.cos.dao.ClothesInfoMapper;
+import cc.mrbird.febs.cos.entity.ClothesInfo;
 import cc.mrbird.febs.cos.service.IClothesInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 public class ClothesInfoServiceImpl extends ServiceImpl<ClothesInfoMapper, ClothesInfo> implements IClothesInfoService {
 
     /**
-     * 分页查询独家信息信息
+     * 分页查询官方动态信息
      *
      * @param page
      * @param clothesInfo

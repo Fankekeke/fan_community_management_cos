@@ -99,7 +99,7 @@ export default {
   }
   .avatar {
     margin: 20px 4px 20px 0;
-    color: #669802;
+    color: #980284;
     background: hsla(0, 0%, 100%, .85);
     vertical-align: middle;
   }

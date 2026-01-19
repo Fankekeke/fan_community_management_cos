@@ -1,7 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.entity.SensitiveInfo;
 import cc.mrbird.febs.cos.dao.SensitiveInfoMapper;
+import cc.mrbird.febs.cos.entity.SensitiveInfo;
 import cc.mrbird.febs.cos.service.ISensitiveInfoService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
