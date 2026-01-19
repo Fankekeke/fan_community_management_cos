@@ -2,4 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.MerchandiseOrdersMapper">
 
+    <select id="queryPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        mo.*,
+        mer.name,
+        mer.category,
+        mer.image_url,
+        ui.name as username,
+        ui.images AS userImages
+        FROM
+        merchandise_orders mo
+        LEFT JOIN merchandise mer ON (mer.id = mo.merchandise_id)
+        LEFT JOIN user_info ui ON (ui.id = mo.user_id)
+        WHERE
+        1 = 1
+        <if test="queryParam.name != null and queryParam.name != ''">
+            AND mer.name LIKE CONCAT('%',#{queryParam.name},'%')
+        </if>
+        <if test="queryParam.username != null and queryParam.username != ''">
+            AND ui.name LIKE CONCAT('%',#{queryParam.username},'%')
+        </if>
+        <if test="queryParam.status != null and queryParam.status != ''">
+            AND mo.status = #{queryParam.status}
+        </if>
+        ORDER BY created_at DESC
+    </select>
 </mapper>

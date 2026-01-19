@@ -2,4 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.OfflineEventOrdersMapper">
 
+    <select id="queryPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        oeo.*,
+        ui.name as username,
+        ui.images AS userImages,
+        oe.title,
+        oe.location,
+        oe.longitude,
+        oe.latitude,
+        oe.ticket_price,
+        oe.event_date,
+        oe.description
+        FROM
+        offline_event_orders oeo
+        LEFT JOIN user_info ui ON (ui.id = oeo.user_id)
+        LEFT JOIN offline_events oe ON (oe.id = oeo.event_id)
+        WHERE
+        1 = 1
+        <if test="queryParam.title != null and queryParam.title != ''">
+            AND oeo.title LIKE CONCAT('%',#{queryParam.title},'%')
+        </if>
+        <if test="queryParam.username != null and queryParam.username != ''">
+            AND ui.name LIKE CONCAT('%',#{queryParam.username},'%')
+        </if>
+        ORDER BY
+        created_at DESC
+    </select>
 </mapper>

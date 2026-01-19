@@ -2,4 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cc.mrbird.febs.cos.dao.OnlineEventLogsMapper">
 
+    <select id="queryPage" resultType="java.util.LinkedHashMap">
+        SELECT
+        oel.*,
+        ui.name as username,
+        ui.images AS userImages,
+        oe.title,
+        oe.live_url,
+        oe.is_vip_only,
+        oe.start_time,
+        oe.end_time,
+        oe.cover_image
+        FROM
+        online_event_logs oel
+        LEFT JOIN user_info ui ON (ui.id = oel.user_id)
+        LEFT JOIN online_events oe ON (oe.id = oel.event_id)
+        WHERE
+        1 = 1
+        <if test="queryParam.title != null and queryParam.title != ''">
+            AND oe.title LIKE CONCAT('%',#{queryParam.title},'%')
+        </if>
+        <if test="queryParam.username != null and queryParam.username != ''">
+            AND ui.username LIKE CONCAT('%',#{queryParam.username},'%')
+        </if>
+        ORDER BY
+        oel.enter_time DESC
+    </select>
 </mapper>

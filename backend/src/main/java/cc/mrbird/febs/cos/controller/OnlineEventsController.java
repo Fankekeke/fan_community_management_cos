@@ -32,7 +32,7 @@ public class OnlineEventsController {
      */
     @GetMapping("/page")
     public R page(Page<OnlineEvents> page, OnlineEvents onlineEvents) {
-        return R.ok();
+        return R.ok(onlineEventsService.queryPage(page, onlineEvents));
     }
 
     /**

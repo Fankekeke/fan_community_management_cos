@@ -32,7 +32,7 @@ public class OfflineEventsController {
      */
     @GetMapping("/page")
     public R page(Page<OfflineEvents> page, OfflineEvents offlineEvents) {
-        return R.ok();
+        return R.ok(offlineEventsService.queryPage(page, offlineEvents));
     }
 
     /**

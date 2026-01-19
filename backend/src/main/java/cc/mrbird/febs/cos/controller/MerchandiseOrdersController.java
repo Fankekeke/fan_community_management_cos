@@ -32,7 +32,7 @@ public class MerchandiseOrdersController {
      */
     @GetMapping("/page")
     public R page(Page<MerchandiseOrders> page, MerchandiseOrders merchandiseOrders) {
-        return R.ok();
+        return R.ok(merchandiseOrdersService.queryPage(page, merchandiseOrders));
     }
 
     /**
