@@ -8,16 +8,16 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="标题"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.title"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="内容"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.content"/>
               </a-form-item>
             </a-col>
@@ -65,6 +65,8 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="viewDetail(record)" title="查 看"></a-icon>
+          <a-divider type="vertical" />
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
         </template>
       </a-table>
@@ -81,6 +83,62 @@
       @success="handleBulletinEditSuccess"
       :bulletinEditVisiable="bulletinEdit.visiable">
     </bulletin-edit>
+    <!-- 订单详情弹窗 -->
+    <a-modal v-model="orderDetail.visiable" title="订单详情" :width="700" @cancel="handleDetailClose">
+      <template slot="footer">
+        <a-button key="close" @click="handleDetailClose">关闭</a-button>
+      </template>
+      <div class="order-detail-content">
+        <div class="detail-row">
+          <span class="detail-label">订单编号：</span>
+          <span class="detail-value">{{ selectedOrder.orderSn }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">用户名：</span>
+          <span class="detail-value">{{ selectedOrder.username }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">商品名称：</span>
+          <span class="detail-value">{{ selectedOrder.name }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">商品分类：</span>
+          <span class="detail-value">{{ selectedOrder.category }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">商品图片：</span>
+          <div class="image-preview">
+            <img :src="'http://127.0.0.1:9527/imagesWeb/' + selectedOrder.imageUrl" alt="商品图片" class="detail-image" />
+          </div>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">购买数量：</span>
+          <span class="detail-value">{{ selectedOrder.quantity }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">总金额：</span>
+          <span class="detail-value">¥{{ selectedOrder.totalAmount }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">订单状态：</span>
+          <span class="detail-value" :class="getStatusClass(selectedOrder.status)">
+        {{ getOrderStatusText(selectedOrder.status) }}
+      </span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">收货地址：</span>
+          <span class="detail-value">{{ selectedOrder.shippingAddress }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">创建时间：</span>
+          <span class="detail-value">{{ selectedOrder.createdAt }}</span>
+        </div>
+        <div class="detail-row" v-if="selectedOrder.paidAt">
+          <span class="detail-label">支付时间：</span>
+          <span class="detail-value">{{ selectedOrder.paidAt }}</span>
+        </div>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -97,6 +155,10 @@ export default {
   components: {BulletinAdd, BulletinEdit, RangeDate},
   data () {
     return {
+      orderDetail: {
+        visiable: false
+      },
+      selectedOrder: {},
       advanced: false,
       bulletinAdd: {
         visiable: false
@@ -128,31 +190,101 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        title: '用户头像',
+        dataIndex: 'userImages',
+        width: 80,
+        customRender: (text, record) => {
+          if (text) {
+            return <a-popover>
+              <template slot="content">
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="用户头像" />
+              </template>
+              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+            </a-popover>
+          } else {
+            return <a-avatar shape="circle" size="large" icon="user" />
+          }
+        }
       }, {
-        title: '公告内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
-      }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '用户名',
+        dataIndex: 'username',
+        width: 100,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'uploader',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '商品名称',
+        dataIndex: 'name',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
+            return text.length > 10 ? `${text.substring(0, 10)}...` : text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '商品图片',
+        dataIndex: 'imageUrl',
+        width: 100,
+        customRender: (text, record) => {
+          if (text) {
+            return <a-popover>
+              <template slot="content">
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="商品图片" />
+              </template>
+              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+            </a-popover>
+          } else {
+            return <a-avatar shape="square" size="small" icon="picture" />
+          }
+        }
+      }, {
+        title: '商品分类',
+        dataIndex: 'category',
+        width: 100,
+        customRender: (text) => {
+          if (text) {
             return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '数量',
+        dataIndex: 'quantity',
+        width: 80,
+        customRender: (text) => {
+          if (text) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '总金额',
+        dataIndex: 'totalAmount',
+        width: 100,
+        customRender: (text) => `¥${text}`
+      }, {
+        title: '订单状态',
+        dataIndex: 'status',
+        width: 100,
+        customRender: (text) => {
+          const statusMap = { 0: '待支付', 1: '已支付', 2: '已发货', 3: '已完成', 4: '已取消', 5: '退款中', 6: '已退款' }
+          return statusMap[text] || '未知状态'
+        }
+      }, {
+        title: '收货地址',
+        dataIndex: 'shippingAddress',
+        width: 200,
+        customRender: (text) => {
+          if (text) {
+            return text.length > 15 ? `${text.substring(0, 15)}...` : text
           } else {
             return '- -'
           }
@@ -160,6 +292,7 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
+        width: 100,
         scopedSlots: {customRender: 'operation'}
       }]
     }
@@ -168,6 +301,47 @@ export default {
     this.fetch()
   },
   methods: {
+    // 查看订单详情
+    viewDetail (record) {
+      this.selectedOrder = record
+      this.orderDetail.visiable = true
+    },
+
+    // 关闭详情弹窗
+    handleDetailClose () {
+      this.orderDetail.visiable = false
+    },
+
+    // 获取订单状态文本
+    getOrderStatusText (status) {
+      const statusMap = {
+        0: '待支付',
+        1: '已支付',
+        2: '已发货',
+        3: '已完成',
+        4: '已取消',
+        5: '退款中',
+        6: '已退款'
+      }
+      return statusMap[status] || '未知状态'
+    },
+
+    // 获取状态样式类
+    getStatusClass (status) {
+      switch (status) {
+        case 0:
+          return 'status-pending'
+        case 1:
+        case 2:
+        case 3:
+          return 'status-paid'
+        case 4:
+        case 6:
+          return 'status-cancelled'
+        default:
+          return ''
+      }
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -182,7 +356,7 @@ export default {
     },
     handleBulletinAddSuccess () {
       this.bulletinAdd.visiable = false
-      this.$message.success('新增公告成功')
+      this.$message.success('新增订单成功')
       this.search()
     },
     edit (record) {
@@ -194,7 +368,7 @@ export default {
     },
     handleBulletinEditSuccess () {
       this.bulletinEdit.visiable = false
-      this.$message.success('修改公告成功')
+      this.$message.success('修改订单成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -212,7 +386,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/bulletin-info/' + ids).then(() => {
+          that.$delete('/cos/merchandiseOrders-orders/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -282,7 +456,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/bulletin-info/page', {
+      this.$get('/cos/merchandiseOrders-orders/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
@@ -300,4 +474,53 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+.order-detail-content {
+  .detail-row {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    padding: 6px 0;
+
+    .detail-label {
+      font-weight: bold;
+      min-width: 100px;
+      color: #666;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      flex: 1;
+      word-break: break-all;
+      color: #333;
+
+      &.status-pending {
+        color: #faad14;
+      }
+
+      &.status-paid {
+        color: #52c41a;
+      }
+
+      &.status-cancelled {
+        color: #bfbfbf;
+      }
+
+      &.status-shipped {
+        color: #1890ff;
+      }
+    }
+
+    .image-preview {
+      flex: 1;
+
+      .detail-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #eee;
+      }
+    }
+  }
+}
 </style>

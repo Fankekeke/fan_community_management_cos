@@ -7,17 +7,17 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                label="online-event-logs"
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.title"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="内容"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.content"/>
               </a-form-item>
             </a-col>
@@ -31,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -128,39 +128,97 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
+        title: '用户头像',
+        dataIndex: 'userImages',
+        width: 80,
+        customRender: (text, record) => {
+          if (text) {
+            return <a-popover>
+              <template slot="content">
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="用户头像" />
+              </template>
+              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+            </a-popover>
+          } else {
+            return <a-avatar shape="circle" size="large" icon="user" />
+          }
+        }
+      }, {
+        title: '用户名',
+        dataIndex: 'username',
+        width: 120,
+        customRender: (text) => {
+          if (text) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '直播活动',
         dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        width: 150,
+        customRender: (text) => {
+          if (text) {
+            return text.length > 15 ? `${text.substring(0, 15)}...` : text
+          } else {
+            return '- -'
+          }
+        }
       }, {
-        title: '公告内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
+        title: '封面图',
+        dataIndex: 'coverImage',
+        width: 100,
+        customRender: (text, record) => {
+          if (text) {
+            return <a-popover>
+              <template slot="content">
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 150px; height: auto;" alt="封面图" />
+              </template>
+              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+            </a-popover>
+          } else {
+            return <a-avatar shape="square" size="small" icon="picture" />
+          }
+        }
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '进入时间',
+        dataIndex: 'enterTime',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'uploader',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '离开时间',
+        dataIndex: 'leaveTime',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
           }
         }
       }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: {customRender: 'operation'}
+        title: 'IP地址',
+        dataIndex: 'ipAddress',
+        width: 120,
+        customRender: (text) => {
+          if (text) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '是否VIP',
+        dataIndex: 'isVipOnly',
+        width: 80,
+        customRender: (text) => text === '1' ? '是' : '否'
       }]
     }
   },
@@ -182,7 +240,7 @@ export default {
     },
     handleBulletinAddSuccess () {
       this.bulletinAdd.visiable = false
-      this.$message.success('新增公告成功')
+      this.$message.success('新增直播数据成功')
       this.search()
     },
     edit (record) {
@@ -194,7 +252,7 @@ export default {
     },
     handleBulletinEditSuccess () {
       this.bulletinEdit.visiable = false
-      this.$message.success('修改公告成功')
+      this.$message.success('修改直播数据成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -212,7 +270,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/bulletin-info/' + ids).then(() => {
+          that.$delete('/cos/online-event-logs/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -282,7 +340,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/bulletin-info/page', {
+      this.$get('/cos/online-event-logs/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

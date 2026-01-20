@@ -24,7 +24,7 @@ public class OfflineEventOrdersServiceImpl extends ServiceImpl<OfflineEventOrder
      * @return 结果
      */
     @Override
-    public IPage<LinkedHashMap<String, Object>> qeuryPage(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders) {
-        return baseMapper.qeuryPage(page, offlineEventOrders);
+    public IPage<LinkedHashMap<String, Object>> queryPage(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders) {
+        return baseMapper.queryPage(page, offlineEventOrders);
     }
 }

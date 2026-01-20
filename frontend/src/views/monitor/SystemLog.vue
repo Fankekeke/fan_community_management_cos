@@ -6,16 +6,16 @@
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="操作人"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.username"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="操作描述"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.operation"/>
               </a-form-item>
             </a-col>
@@ -24,16 +24,16 @@
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="操作地点"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.location"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="操作时间"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <range-date @change="handleDateChange" ref="createTime" style="width: 100%"></range-date>
               </a-form-item>
             </a-col>

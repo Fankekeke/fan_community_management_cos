@@ -7,16 +7,16 @@
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="Bean名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.beanName"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="方法名称"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.methodName"/>
               </a-form-item>
             </a-col>
@@ -25,16 +25,16 @@
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="方法参数"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.params"/>
               </a-form-item>
             </a-col>
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="执行时间"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <range-date @change="handleDateChange" ref="createTime"></range-date>
               </a-form-item>
             </a-col>

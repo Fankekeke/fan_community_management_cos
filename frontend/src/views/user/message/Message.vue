@@ -8,8 +8,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item
                 label="消息状态"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-select v-model="queryParams.readStatus" allowClear>
                   <a-select-option value="0">未读</a-select-option>
                   <a-select-option value="1">已读</a-select-option>

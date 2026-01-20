@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="修改公告" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="修改活动预约" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -11,7 +11,7 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='公告标题' v-bind="formItemLayout">
+          <a-form-item label='活动预约标题' v-bind="formItemLayout">
             <a-input v-decorator="[
             'title',
             { rules: [{ required: true, message: '请输入名称!' }] }
@@ -27,7 +27,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="24">
-          <a-form-item label='公告内容' v-bind="formItemLayout">
+          <a-form-item label='活动预约内容' v-bind="formItemLayout">
             <a-textarea :rows="6" v-decorator="[
             'content',
              { rules: [{ required: true, message: '请输入名称!' }] }
@@ -145,7 +145,7 @@ export default {
         values.images = images.length > 0 ? images.join(',') : null
         if (!err) {
           this.loading = true
-          this.$put('/cos/bulletin-info', {
+          this.$put('/cos/offline-event-orders', {
             ...values
           }).then((r) => {
             this.reset()

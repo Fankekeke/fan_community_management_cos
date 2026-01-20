@@ -7,24 +7,24 @@
             <a-col :md="8" :sm="24" >
               <a-form-item
                 label="键"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.keyy"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24" >
               <a-form-item
                 label="值"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.valuee"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24" >
               <a-form-item
                 label="表名"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.tableName"/>
               </a-form-item>
             </a-col>
@@ -33,8 +33,8 @@
             <a-col :md="8" :sm="24" >
               <a-form-item
                 label="字段"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.fieldName" />
               </a-form-item>
             </a-col>

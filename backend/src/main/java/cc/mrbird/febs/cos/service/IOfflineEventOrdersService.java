@@ -20,5 +20,5 @@ public interface IOfflineEventOrdersService extends IService<OfflineEventOrders>
      * @param offlineEventOrders 线下活动订单信息
      * @return 结果
      */
-    IPage<LinkedHashMap<String, Object>> qeuryPage(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders);
+    IPage<LinkedHashMap<String, Object>> queryPage(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders);
 }

@@ -7,18 +7,10 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                label="直播标题"
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.title"/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item
-                label="内容"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
               </a-form-item>
             </a-col>
           </div>
@@ -65,6 +57,8 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
+          <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="viewDetail(record)" title="查 看"></a-icon>
+          <a-divider type="vertical" />
           <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
         </template>
       </a-table>
@@ -81,6 +75,75 @@
       @success="handleBulletinEditSuccess"
       :bulletinEditVisiable="bulletinEdit.visiable">
     </bulletin-edit>
+    <!-- 直播详情弹窗 -->
+    <!-- 直播详情弹窗 -->
+    <a-modal v-model="onlineDetail.visiable" title="直播详情" :width="800" @cancel="handleDetailClose">
+      <template slot="footer">
+        <a-button key="close" @click="handleDetailClose">关闭</a-button>
+        <a-button key="copy" @click="copyLiveUrl(selectedRecord.liveUrl)">复制链接</a-button>
+        <a-button key="play" type="primary" @click="playLiveStream(selectedRecord.liveUrl)">播放直播</a-button>
+      </template>
+      <div class="detail-content">
+        <div class="detail-item">
+          <span class="detail-label">直播标题：</span>
+          <span class="detail-value">{{ selectedRecord.title }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">直播链接：</span>
+          <a-tooltip :title="selectedRecord.liveUrl">
+        <span class="detail-value detail-link" @click="copyLiveUrl(selectedRecord.liveUrl)">
+          {{ selectedRecord.liveUrl && selectedRecord.liveUrl.length > 50 ? selectedRecord.liveUrl.substring(0, 50) + '...' : selectedRecord.liveUrl }}
+        </span>
+          </a-tooltip>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">是否仅限会员：</span>
+          <span class="detail-value" :class="{'vip-status': selectedRecord.isVipOnly === '1', 'normal-status': selectedRecord.isVipOnly === '0'}">
+        {{ selectedRecord.isVipOnly === '1' ? '是' : '否' }}
+      </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">状态：</span>
+          <span class="detail-value" :class="{'status-active': selectedRecord.status === '1', 'status-inactive': selectedRecord.status === '0'}">
+        {{ selectedRecord.status === '1' ? '开启' : '禁用' }}
+      </span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">开始时间：</span>
+          <span class="detail-value">{{ selectedRecord.startTime }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">结束时间：</span>
+          <span class="detail-value">{{ selectedRecord.endTime }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">创建时间：</span>
+          <span class="detail-value">{{ selectedRecord.createdAt }}</span>
+        </div>
+        <div class="detail-item" v-if="selectedRecord.coverImage">
+          <span class="detail-label">封面图：</span>
+          <div class="cover-image-container">
+            <img :src="'http://127.0.0.1:9527/imagesWeb/' + selectedRecord.coverImage" alt="封面图" class="cover-image" />
+          </div>
+        </div>
+
+        <!-- 视频播放器区域 -->
+        <div class="video-player-container" v-if="currentLiveUrl">
+          <h4>直播预览</h4>
+          <video
+            id="live-player"
+            class="video-js vjs-default-skin"
+            controls
+            preload="auto"
+            width="100%"
+            height="400"
+            :key="playerKey"
+          >
+            <source :src="currentLiveUrl" type="application/x-mpegURL" />
+          </video>
+        </div>
+      </div>
+    </a-modal>
   </a-card>
 </template>
 
@@ -89,6 +152,8 @@ import RangeDate from '@/components/datetime/RangeDate'
 import BulletinAdd from './OnlineAdd.vue'
 import BulletinEdit from './OnlineEdit.vue'
 import {mapState} from 'vuex'
+import videojs from 'video.js';
+import 'video.js/dist/video-js.css';
 import moment from 'moment'
 moment.locale('zh-cn')
 
@@ -97,6 +162,14 @@ export default {
   components: {BulletinAdd, BulletinEdit, RangeDate},
   data () {
     return {
+      // ...其他数据
+      onlineDetail: {
+        visiable: false
+      },
+      currentLiveUrl: null, // 当前播放的直播链接
+      playerKey: 0, // 用于强制刷新播放器
+      player: null, // 播放器实例
+      selectedRecord: {},
       advanced: false,
       bulletinAdd: {
         visiable: false
@@ -128,30 +201,75 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
+        title: '直播标题',
         dataIndex: 'title',
         scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        width: 200
       }, {
-        title: '公告内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
+        title: '封面图',
+        dataIndex: 'coverImage',
+        width: 120,
+        customRender: (text, record) => {
+          if (text) {
+            return <a-popover>
+              <template slot="content">
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 200px; height: auto;" alt="封面图" />
+              </template>
+              <a-avatar shape="square" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+            </a-popover>
+          } else {
+            return <a-avatar shape="square" size="large" icon="picture" />
+          }
+        }
       }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '直播链接',
+        dataIndex: 'liveUrl',
+        width: 200,
+        customRender: (text) => {
+          if (text) {
+            return text.length > 20 ? `${text.substring(0, 20)}...` : text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '是否仅限会员',
+        dataIndex: 'isVipOnly',
+        width: 100,
+        customRender: (text) => text === '1' ? '是' : '否'
+      }, {
+        title: '状态',
+        dataIndex: 'status',
+        width: 80,
+        customRender: (text) => text === '1' ? '开启' : '禁用'
+      }, {
+        title: '开始时间',
+        dataIndex: 'startTime',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
           }
         }
       }, {
-        title: '上传人',
-        dataIndex: 'uploader',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '结束时间',
+        dataIndex: 'endTime',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
+            return text
+          } else {
+            return '- -'
+          }
+        }
+      }, {
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
@@ -160,6 +278,7 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
+        width: 100,
         scopedSlots: {customRender: 'operation'}
       }]
     }
@@ -168,6 +287,93 @@ export default {
     this.fetch()
   },
   methods: {
+    initPlayer () {
+      // 销毁之前的播放器实例
+      if (this.player) {
+        this.player.dispose()
+      }
+
+      // 使用异步延迟确保DOM已渲染
+      this.$nextTick(() => {
+        setTimeout(() => {
+          const videoElement = document.getElementById('live-player')
+          if (videoElement) {
+            // 如果使用 video.js
+            this.player = this.$video(videoElement, {
+              language: 'zh-CN',
+              playbackRates: [0.5, 1, 1.5, 2],
+              fluid: true,
+              responsive: true
+            })
+          }
+        }, 100)
+      })
+    },
+
+    // 播放直播流
+    playLiveStream (liveUrl) {
+      if (!liveUrl) {
+        this.$message.warning('直播链接不存在')
+        return
+      }
+
+      // 设置当前直播链接，触发视频播放器更新
+      this.currentLiveUrl = liveUrl
+
+      // 强制刷新播放器
+      this.playerKey += 1
+
+      // 初始化播放器
+      this.$nextTick(() => {
+        this.initPlayer()
+      })
+    },
+
+    // 查看详情
+    viewDetail (record) {
+      this.selectedRecord = record
+      this.currentLiveUrl = record.liveUrl
+      this.onlineDetail.visiable = true
+
+      // 初始化播放器
+      this.$nextTick(() => {
+        this.playerKey += 1
+        setTimeout(() => {
+          this.initPlayer()
+        }, 100)
+      })
+    },
+
+    // 关闭详情弹窗
+    handleDetailClose () {
+      // 销毁播放器实例
+      if (this.player) {
+        this.player.dispose()
+        this.player = null
+      }
+      this.currentLiveUrl = null
+      this.onlineDetail.visiable = false
+    },
+    async copyLiveUrl (url) {
+      if (!url) {
+        this.$message.warning('直播链接不存在')
+        return
+      }
+
+      try {
+        await navigator.clipboard.writeText(url)
+        this.$message.success('直播链接已复制到剪贴板')
+      } catch (err) {
+        // 降级方案
+        const textArea = document.createElement('textarea')
+        textArea.value = url
+        document.body.appendChild(textArea)
+        textArea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textArea)
+        this.$message.success('直播链接已复制到剪贴板')
+      }
+    },
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
     },
@@ -182,7 +388,7 @@ export default {
     },
     handleBulletinAddSuccess () {
       this.bulletinAdd.visiable = false
-      this.$message.success('新增公告成功')
+      this.$message.success('新增线上直播成功')
       this.search()
     },
     edit (record) {
@@ -194,7 +400,7 @@ export default {
     },
     handleBulletinEditSuccess () {
       this.bulletinEdit.visiable = false
-      this.$message.success('修改公告成功')
+      this.$message.success('修改线上直播成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -212,7 +418,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/bulletin-info/' + ids).then(() => {
+          that.$delete('/cos/online-events/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -282,7 +488,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/bulletin-info/page', {
+      this.$get('/cos/online-events/page', {
         ...params
       }).then((r) => {
         let data = r.data.data
@@ -300,4 +506,162 @@ export default {
 </script>
 <style lang="less" scoped>
 @import "../../../../static/less/Common";
+.detail-content {
+  .detail-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      min-width: 100px;
+      color: #666;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      flex: 1;
+      word-break: break-all;
+      color: #333;
+
+      &.detail-link {
+        color: #1890ff;
+        cursor: pointer;
+        transition: color 0.3s;
+
+        &:hover {
+          color: #40a9ff;
+        }
+      }
+
+      &.vip-status {
+        color: #ff7875;
+      }
+
+      &.normal-status {
+        color: #52c41a;
+      }
+
+      &.status-active {
+        color: #52c41a;
+      }
+
+      &.status-inactive {
+        color: #bfbfbf;
+      }
+    }
+  }
+
+  .cover-image-container {
+    flex: 1;
+    margin-top: 5px;
+
+    .cover-image {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 4px;
+      border: 1px solid #e8e8e8;
+      object-fit: cover;
+    }
+  }
+}
+
+// 弹窗整体样式优化
+/deep/ .ant-modal-body {
+  padding: 24px;
+}
+
+.detail-content {
+  .detail-item {
+    display: flex;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      min-width: 100px;
+      color: #666;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      flex: 1;
+      word-break: break-all;
+      color: #333;
+
+      &.detail-link {
+        color: #1890ff;
+        cursor: pointer;
+        transition: color 0.3s;
+
+        &:hover {
+          color: #40a9ff;
+        }
+      }
+
+      &.vip-status {
+        color: #ff7875;
+      }
+
+      &.normal-status {
+        color: #52c41a;
+      }
+
+      &.status-active {
+        color: #52c41a;
+      }
+
+      &.status-inactive {
+        color: #bfbfbf;
+      }
+    }
+  }
+
+  .cover-image-container {
+    flex: 1;
+    margin-top: 5px;
+
+    .cover-image {
+      max-width: 200px;
+      max-height: 150px;
+      border-radius: 4px;
+      border: 1px solid #e8e8e8;
+      object-fit: cover;
+    }
+  }
+
+  .video-player-container {
+    margin-top: 20px;
+    width: 100%;
+
+    h4 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+  }
+}
+
+// 弹窗整体样式优化
+/deep/ .ant-modal-body {
+  padding: 24px;
+}
+
+// 视频播放器样式
+.video-js {
+  width: 100% !important;
+  height: 400px !important;
+  background-color: #000;
+}
 </style>

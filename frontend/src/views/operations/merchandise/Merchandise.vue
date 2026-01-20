@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                label="商品名称"
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
+                <a-input v-model="queryParams.name"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                label="商品分类"
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
+                <a-input v-model="queryParams.category"/>
               </a-form-item>
             </a-col>
           </div>
@@ -128,30 +128,54 @@ export default {
     }),
     columns () {
       return [{
-        title: '标题',
-        dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 300
+        title: '商品名称',
+        dataIndex: 'name',
+        width: 200
       }, {
-        title: '公告内容',
-        dataIndex: 'content',
-        scopedSlots: { customRender: 'contentShow' },
-        width: 600
-      }, {
-        title: '发布时间',
-        dataIndex: 'createDate',
-        customRender: (text, row, index) => {
-          if (text !== null) {
-            return text
-          } else {
-            return '- -'
-          }
+        title: '分类',
+        dataIndex: 'category',
+        width: 100,
+        customRender: (text) => {
+          const categoryMap = { '周边': '周边', '专辑': '专辑', '衣服': '衣服' }
+          return categoryMap[text] || text
         }
       }, {
-        title: '上传人',
-        dataIndex: 'uploader',
-        customRender: (text, row, index) => {
-          if (text !== null) {
+        title: '售价',
+        dataIndex: 'price',
+        width: 100,
+        customRender: (text) => `¥${text}`
+      }, {
+        title: '库存',
+        dataIndex: 'stock',
+        width: 100,
+        customRender: (text) => text || 0
+      }, {
+        title: '商品图片',
+        dataIndex: 'imageUrl',
+        customRender: (text, record, index) => {
+          if (!record.imageUrl) return <a-avatar shape="square" icon="user" />
+          return <a-popover>
+            <template slot="content">
+              <a-avatar shape="square" size={132} icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.imageUrl.split(',')[0] } />
+            </template>
+            <a-avatar shape="square" icon="user" src={ 'http://127.0.0.1:9527/imagesWeb/' + record.imageUrl.split(',')[0] } />
+          </a-popover>
+        }
+      }, {
+        title: '商品描述',
+        dataIndex: 'description',
+        width: 300
+      }, {
+        title: '是否在售',
+        dataIndex: 'isOnSale',
+        width: 100,
+        customRender: (text) => text == '1' ? '是' : '否'
+      }, {
+        title: '创建时间',
+        dataIndex: 'createdAt',
+        width: 150,
+        customRender: (text) => {
+          if (text) {
             return text
           } else {
             return '- -'
@@ -160,6 +184,7 @@ export default {
       }, {
         title: '操作',
         dataIndex: 'operation',
+        width: 100,
         scopedSlots: {customRender: 'operation'}
       }]
     }
@@ -182,7 +207,7 @@ export default {
     },
     handleBulletinAddSuccess () {
       this.bulletinAdd.visiable = false
-      this.$message.success('新增公告成功')
+      this.$message.success('新增周边商品成功')
       this.search()
     },
     edit (record) {
@@ -194,7 +219,7 @@ export default {
     },
     handleBulletinEditSuccess () {
       this.bulletinEdit.visiable = false
-      this.$message.success('修改公告成功')
+      this.$message.success('修改周边商品成功')
       this.search()
     },
     handleDeptChange (value) {
@@ -212,7 +237,7 @@ export default {
         centered: true,
         onOk () {
           let ids = that.selectedRowKeys.join(',')
-          that.$delete('/cos/bulletin-info/' + ids).then(() => {
+          that.$delete('/cos/merchandise/' + ids).then(() => {
             that.$message.success('删除成功')
             that.selectedRowKeys = []
             that.search()
@@ -282,7 +307,7 @@ export default {
         params.size = this.pagination.defaultPageSize
         params.current = this.pagination.defaultCurrent
       }
-      this.$get('/cos/bulletin-info/page', {
+      this.$get('/cos/merchandise/page', {
         ...params
       }).then((r) => {
         let data = r.data.data

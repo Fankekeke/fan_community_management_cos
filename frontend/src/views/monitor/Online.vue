@@ -8,8 +8,8 @@
             <a-col :md="12" :sm="24" >
               <a-form-item
                 label="用户名"
-                :labelCol="{span: 5}"
-                :wrapperCol="{span: 18, offset: 1}">
+                :labelCol="{span: 8}"
+                :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.username"/>
               </a-form-item>
             </a-col>

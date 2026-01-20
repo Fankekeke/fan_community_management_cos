@@ -57,7 +57,7 @@ public class OnlineEvents implements Serializable {
     /**
      * 状态: 0禁用, 1开启
      */
-    private Integer status;
+    private String status;
 
     private String createdAt;
 

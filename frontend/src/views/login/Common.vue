@@ -55,8 +55,9 @@ export default {
     flex-direction: column;
     height: 100vh;
     overflow: auto;
-    background-color: #e3e3e3;
     background-repeat: repeat-x, repeat;
+    background: #e3e3e3 url(../../../static/img/undraw_complete-design.png) no-repeat center ;
+    background-size: contain;
     .content {
       padding: 32px 0;
       flex: 1;

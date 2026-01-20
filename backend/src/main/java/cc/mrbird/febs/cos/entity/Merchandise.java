@@ -56,7 +56,7 @@ public class Merchandise implements Serializable {
     private String imageUrl;
 
     /**
-     * 是否在售
+     * 是否在售（0.是 1.否）
      */
     private String isOnSale;
 
