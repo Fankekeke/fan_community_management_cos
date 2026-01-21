@@ -26,6 +26,9 @@
         <if test="queryParam.username != null and queryParam.username != ''">
             AND ui.name LIKE CONCAT('%',#{queryParam.username},'%')
         </if>
+        <if test="queryParam.userId != null">
+            AND ui.user_id = #{queryParam.userId}
+        </if>
         ORDER BY
         created_at DESC
     </select>

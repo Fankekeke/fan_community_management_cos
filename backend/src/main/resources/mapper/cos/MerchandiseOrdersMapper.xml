@@ -25,6 +25,9 @@
         <if test="queryParam.status != null and queryParam.status != ''">
             AND mo.status = #{queryParam.status}
         </if>
+        <if test="queryParam.userId != null">
+            AND ui.user_id = #{queryParam.userId}
+        </if>
         ORDER BY created_at DESC
     </select>
 </mapper>
