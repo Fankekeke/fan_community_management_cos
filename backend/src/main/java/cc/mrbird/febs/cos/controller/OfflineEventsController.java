@@ -64,7 +64,6 @@ public class OfflineEventsController {
      */
     @PostMapping
     public R save(OfflineEvents offlineEvents) {
-        offlineEvents.setTitle(offlineEvents.getName());
         offlineEvents.setCreatedAt(DateUtil.formatDateTime(new Date()));
         return R.ok(offlineEventsService.save(offlineEvents));
     }

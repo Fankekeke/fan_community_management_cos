@@ -21,4 +21,12 @@ public interface OfflineEventOrdersMapper extends BaseMapper<OfflineEventOrders>
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<OfflineEventOrders> page, @Param("queryParam") OfflineEventOrders offlineEventOrders);
+
+    /**
+     * 查询订单详情
+     *
+     * @param orderCode 订单ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> queryOrderDetailByCode(@Param("orderCode") String orderCode);
 }

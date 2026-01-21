@@ -202,20 +202,18 @@ export default {
     columns () {
       return [{
         title: '直播标题',
-        dataIndex: 'title',
-        scopedSlots: { customRender: 'titleShow' },
-        width: 200
+        ellipsis: true,
+        dataIndex: 'title'
       }, {
         title: '封面图',
         dataIndex: 'coverImage',
-        width: 120,
         customRender: (text, record) => {
           if (text) {
             return <a-popover>
               <template slot="content">
-                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 200px; height: auto;" alt="封面图" />
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} style="width: 200px; height: auto;" alt="封面图" />
               </template>
-              <a-avatar shape="square" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+              <a-avatar shape="square" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} />
             </a-popover>
           } else {
             return <a-avatar shape="square" size="large" icon="picture" />
@@ -224,7 +222,7 @@ export default {
       }, {
         title: '直播链接',
         dataIndex: 'liveUrl',
-        width: 200,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text.length > 20 ? `${text.substring(0, 20)}...` : text
@@ -233,19 +231,17 @@ export default {
           }
         }
       }, {
-        title: '是否仅限会员',
+        title: '仅限会员',
         dataIndex: 'isVipOnly',
-        width: 100,
         customRender: (text) => text === '1' ? '是' : '否'
       }, {
         title: '状态',
         dataIndex: 'status',
-        width: 80,
         customRender: (text) => text === '1' ? '开启' : '禁用'
       }, {
         title: '开始时间',
         dataIndex: 'startTime',
-        width: 150,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text
@@ -256,7 +252,7 @@ export default {
       }, {
         title: '结束时间',
         dataIndex: 'endTime',
-        width: 150,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text
@@ -267,7 +263,7 @@ export default {
       }, {
         title: '创建时间',
         dataIndex: 'createdAt',
-        width: 150,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text

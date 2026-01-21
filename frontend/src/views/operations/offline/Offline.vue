@@ -129,12 +129,12 @@ export default {
     columns () {
       return [{
         title: '活动名称',
-        dataIndex: 'title',
-        width: 200
+        ellipsis: true,
+        dataIndex: 'title'
       }, {
         title: '活动地点',
+        ellipsis: true,
         dataIndex: 'location',
-        width: 250,
         customRender: (text) => {
           if (text) {
             return text.length > 20 ? `${text.substring(0, 20)}...` : text
@@ -144,23 +144,21 @@ export default {
         }
       }, {
         title: '门票价格',
+        ellipsis: true,
         dataIndex: 'ticketPrice',
-        width: 100,
         customRender: (text) => `¥${text}`
       }, {
         title: '总名额',
         dataIndex: 'totalCapacity',
-        width: 80,
         customRender: (text) => text || 0
       }, {
         title: '剩余名额',
         dataIndex: 'remainingCapacity',
-        width: 100,
         customRender: (text) => text || 0
       }, {
         title: '活动日期',
+        ellipsis: true,
         dataIndex: 'eventDate',
-        width: 120,
         customRender: (text) => {
           if (text) {
             return text
@@ -170,12 +168,12 @@ export default {
         }
       }, {
         title: '活动详情',
-        dataIndex: 'description',
-        width: 300
+        ellipsis: true,
+        dataIndex: 'description'
       }, {
         title: '创建时间',
+        ellipsis: true,
         dataIndex: 'createdAt',
-        width: 150,
         customRender: (text) => {
           if (text) {
             return text

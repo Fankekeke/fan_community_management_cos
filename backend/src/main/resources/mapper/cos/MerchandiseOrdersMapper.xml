@@ -16,18 +16,16 @@
         LEFT JOIN user_info ui ON (ui.id = mo.user_id)
         WHERE
         1 = 1
+        AND mo.status = 3
         <if test="queryParam.name != null and queryParam.name != ''">
             AND mer.name LIKE CONCAT('%',#{queryParam.name},'%')
         </if>
         <if test="queryParam.username != null and queryParam.username != ''">
             AND ui.name LIKE CONCAT('%',#{queryParam.username},'%')
         </if>
-        <if test="queryParam.status != null and queryParam.status != ''">
-            AND mo.status = #{queryParam.status}
-        </if>
         <if test="queryParam.userId != null">
             AND ui.user_id = #{queryParam.userId}
         </if>
-        ORDER BY created_at DESC
+        ORDER BY mo.created_at DESC
     </select>
 </mapper>

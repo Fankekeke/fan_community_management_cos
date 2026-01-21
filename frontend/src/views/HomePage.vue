@@ -217,6 +217,8 @@ import PostEdit from './admin/post/PostEdit'
 import {mapState} from 'vuex'
 import moment from 'moment'
 import ClothesView from './admin/clothes/ClothesView.vue'
+import { getUrlKey } from '@/utils/urlKey'
+
 moment.locale('zh-cn')
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
@@ -549,6 +551,11 @@ export default {
     }
   },
   mounted () {
+    if (getUrlKey('out_trade_no') !== null) {
+      this.$get('/cos/pay/orderAudit', { orderCode: getUrlKey('out_trade_no') }).then((r) => {
+        this.$message.success('支付成功！')
+      })
+    }
     this.selectHomeImages()
     this.getTagList()
     this.getNewList()

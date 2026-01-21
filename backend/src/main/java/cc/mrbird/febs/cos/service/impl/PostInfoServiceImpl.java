@@ -1,7 +1,7 @@
 package cc.mrbird.febs.cos.service.impl;
 
-import cc.mrbird.febs.cos.entity.PostInfo;
 import cc.mrbird.febs.cos.dao.PostInfoMapper;
+import cc.mrbird.febs.cos.entity.PostInfo;
 import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IPostInfoService;
 import cc.mrbird.febs.cos.service.IUserInfoService;

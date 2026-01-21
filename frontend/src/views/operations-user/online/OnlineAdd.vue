@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model="show" title="新增公告" @cancel="onClose" :width="800">
+  <a-modal v-model="show" title="新增线上直播" @cancel="onClose" :width="800">
     <template slot="footer">
       <a-button key="back" @click="onClose">
         取消
@@ -11,27 +11,79 @@
     <a-form :form="form" layout="vertical">
       <a-row :gutter="20">
         <a-col :span="12">
-          <a-form-item label='公告标题' v-bind="formItemLayout">
+          <a-form-item label='直播标题' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'title',
-            { rules: [{ required: true, message: '请输入名称!' }] }
-            ]"/>
+      'title',
+      { rules: [{ required: true, message: '请输入直播标题!' }] }
+      ]"/>
           </a-form-item>
         </a-col>
         <a-col :span="12">
-          <a-form-item label='上传人' v-bind="formItemLayout">
+          <a-form-item label='直播链接' v-bind="formItemLayout">
             <a-input v-decorator="[
-            'uploader',
-            { rules: [{ required: true, message: '请输入上传人!' }] }
-            ]"/>
+      'liveUrl',
+      { rules: [{ required: true, message: '请输入直播链接!' }] }
+      ]"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='是否仅限会员' v-bind="formItemLayout">
+            <a-select v-decorator="[
+      'isVipOnly',
+      { rules: [{ required: true, message: '请选择是否仅限会员!' }], initialValue: '0' }
+      ]">
+              <a-select-option value="0">否</a-select-option>
+              <a-select-option value="1">是</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='状态' v-bind="formItemLayout">
+            <a-select v-decorator="[
+      'status',
+      { rules: [{ required: true, message: '请选择状态!' }], initialValue: 1 }
+      ]">
+              <a-select-option :value="1">开启</a-select-option>
+              <a-select-option :value="0">禁用</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='开始时间' v-bind="formItemLayout">
+            <a-date-picker v-decorator="[
+      'startTime',
+      { rules: [{ required: true, message: '请选择开始时间!' }] }
+      ]" format="YYYY-MM-DD HH:mm:ss" show-time style="width: 100%"/>
+          </a-form-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-item label='结束时间' v-bind="formItemLayout">
+            <a-date-picker v-decorator="[
+      'endTime',
+      { rules: [{ required: true, message: '请选择结束时间!' }] }
+      ]" format="YYYY-MM-DD HH:mm:ss" show-time style="width: 100%"/>
           </a-form-item>
         </a-col>
         <a-col :span="24">
-          <a-form-item label='公告内容' v-bind="formItemLayout">
-            <a-textarea :rows="6" v-decorator="[
-            'content',
-             { rules: [{ required: true, message: '请输入名称!' }] }
-            ]"/>
+          <a-form-item label='图册' v-bind="formItemLayout">
+            <a-upload
+              name="avatar"
+              action="http://127.0.0.1:9527/file/fileUpload/"
+              list-type="picture-card"
+              :file-list="fileList"
+              @preview="handlePreview"
+              @change="picHandleChange"
+            >
+              <div v-if="fileList.length < 8">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
           </a-form-item>
         </a-col>
       </a-row>
@@ -41,6 +93,8 @@
 
 <script>
 import {mapState} from 'vuex'
+import moment from 'moment'
+moment.locale('zh-cn')
 function getBase64 (file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -111,11 +165,12 @@ export default {
         images.push(image.response)
       })
       this.form.validateFields((err, values) => {
-        values.images = images.length > 0 ? images.join(',') : null
+        values.coverImage = images.length > 0 ? images.join(',') : null
+        values.startTime = moment(values.startTime).format('YYYY-MM-DD HH:mm:ss')
+        values.endTime = moment(values.endTime).format('YYYY-MM-DD HH:mm:ss')
         if (!err) {
-          values.publisher = this.currentUser.userId
           this.loading = true
-          this.$post('/cos/bulletin-info', {
+          this.$post('/cos/online-events', {
             ...values
           }).then((r) => {
             this.reset()

@@ -7,7 +7,7 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="online-event-logs"
+                label="直播标题"
                 :labelCol="{span: 8}"
                 :wrapperCol="{span: 15, offset: 1}">
                 <a-input v-model="queryParams.title"/>
@@ -135,9 +135,9 @@ export default {
           if (text) {
             return <a-popover>
               <template slot="content">
-                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="用户头像" />
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} style="width: 120px; height: auto;" alt="用户头像" />
               </template>
-              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} />
             </a-popover>
           } else {
             return <a-avatar shape="circle" size="large" icon="user" />
@@ -173,9 +173,9 @@ export default {
           if (text) {
             return <a-popover>
               <template slot="content">
-                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 150px; height: auto;" alt="封面图" />
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} style="width: 150px; height: auto;" alt="封面图" />
               </template>
-              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} />
             </a-popover>
           } else {
             return <a-avatar shape="square" size="small" icon="picture" />
@@ -214,11 +214,6 @@ export default {
             return '- -'
           }
         }
-      }, {
-        title: '是否VIP',
-        dataIndex: 'isVipOnly',
-        width: 80,
-        customRender: (text) => text === '1' ? '是' : '否'
       }]
     }
   },

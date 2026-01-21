@@ -7,18 +7,18 @@
           <div :class="advanced ? null: 'fold'">
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="标题"
+                label="商品名称"
                 :labelCol="{span: 8}"
                 :wrapperCol="{span: 15, offset: 1}">
-                <a-input v-model="queryParams.title"/>
+                <a-input v-model="queryParams.name"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="内容"
+                label="所属用户"
                 :labelCol="{span: 8}"
                 :wrapperCol="{span: 15, offset: 1}">
-                <a-input v-model="queryParams.content"/>
+                <a-input v-model="queryParams.username"/>
               </a-form-item>
             </a-col>
           </div>
@@ -31,7 +31,7 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add">新增</a-button>
+<!--        <a-button type="primary" ghost @click="add">新增</a-button>-->
         <a-button @click="batchDelete">删除</a-button>
       </div>
       <!-- 表格区域 -->
@@ -66,8 +66,8 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon type="eye" theme="twoTone" twoToneColor="#1890ff" @click="viewDetail(record)" title="查 看"></a-icon>
-          <a-divider type="vertical" />
-          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>
+<!--          <a-divider type="vertical" />-->
+<!--          <a-icon type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修 改"></a-icon>-->
         </template>
       </a-table>
     </div>
@@ -197,9 +197,9 @@ export default {
           if (text) {
             return <a-popover>
               <template slot="content">
-                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="用户头像" />
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} style="width: 120px; height: auto;" alt="用户头像" />
               </template>
-              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+              <a-avatar shape="circle" size="large" src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} />
             </a-popover>
           } else {
             return <a-avatar shape="circle" size="large" icon="user" />
@@ -208,6 +208,7 @@ export default {
       }, {
         title: '用户名',
         dataIndex: 'username',
+        ellipsis: true,
         width: 100,
         customRender: (text) => {
           if (text) {
@@ -219,6 +220,7 @@ export default {
       }, {
         title: '商品名称',
         dataIndex: 'name',
+        ellipsis: true,
         width: 150,
         customRender: (text) => {
           if (text) {
@@ -235,9 +237,9 @@ export default {
           if (text) {
             return <a-popover>
               <template slot="content">
-                <img src={`http://127.0.0.1:9527/imagesWeb/${text}`} style="width: 120px; height: auto;" alt="商品图片" />
+                <img src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} style="width: 120px; height: auto;" alt="商品图片" />
               </template>
-              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text}`} />
+              <a-avatar shape="square" size="small" src={`http://127.0.0.1:9527/imagesWeb/${text.split(',')[0]}`} />
             </a-popover>
           } else {
             return <a-avatar shape="square" size="small" icon="picture" />
@@ -268,6 +270,7 @@ export default {
       }, {
         title: '总金额',
         dataIndex: 'totalAmount',
+        ellipsis: true,
         width: 100,
         customRender: (text) => `¥${text}`
       }, {
@@ -281,6 +284,7 @@ export default {
       }, {
         title: '收货地址',
         dataIndex: 'shippingAddress',
+        ellipsis: true,
         width: 200,
         customRender: (text) => {
           if (text) {

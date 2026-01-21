@@ -1,5 +1,6 @@
 package cc.mrbird.febs.cos.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -49,6 +50,11 @@ public class OfflineEventOrders implements Serializable {
      * 是否已核销: 0否, 1是
      */
     private String isChecked;
+
+    /**
+     * 订单价格
+     */
+    private BigDecimal orderPrice;
 
     /**
      * 核销时间

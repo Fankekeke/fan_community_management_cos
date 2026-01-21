@@ -27,4 +27,15 @@ public class OfflineEventOrdersServiceImpl extends ServiceImpl<OfflineEventOrder
     public IPage<LinkedHashMap<String, Object>> queryPage(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders) {
         return baseMapper.queryPage(page, offlineEventOrders);
     }
+
+    /**
+     * 查询订单详情
+     *
+     * @param orderCode 订单ID
+     * @return 结果
+     */
+    @Override
+    public LinkedHashMap<String, Object> queryOrderDetailByCode(String orderCode) {
+        return baseMapper.queryOrderDetailByCode(orderCode);
+    }
 }

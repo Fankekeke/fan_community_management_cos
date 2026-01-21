@@ -32,4 +32,26 @@
         ORDER BY
         created_at DESC
     </select>
+
+    <!-- 查询订单详情 -->
+    <select id="queryOrderDetailByCode" resultType="java.util.LinkedHashMap">
+        SELECT
+        oeo.*,
+        ui.name as username,
+        ui.images AS userImages,
+        oe.title,
+        oe.location,
+        oe.longitude,
+        oe.latitude,
+        oe.ticket_price,
+        oe.event_date,
+        oe.description
+        FROM
+        offline_event_orders oeo
+        LEFT JOIN user_info ui ON (ui.id = oeo.user_id)
+        LEFT JOIN offline_events oe ON (oe.id = oeo.event_id)
+        WHERE
+        1 = 1
+        AND oeo.order_sn = #{orderCode}
+    </select>
 </mapper>

@@ -191,7 +191,7 @@ export default {
       return [{
         title: '活动名称',
         dataIndex: 'title',
-        width: 200
+        ellipsis: true
       }, {
         title: '商品图片',
         dataIndex: 'userImages',
@@ -207,7 +207,7 @@ export default {
       }, {
         title: '用户名',
         dataIndex: 'username',
-        width: 120,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text
@@ -218,7 +218,7 @@ export default {
       }, {
         title: '活动地点',
         dataIndex: 'location',
-        width: 200,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text.length > 15 ? `${text.substring(0, 15)}...` : text
@@ -229,12 +229,11 @@ export default {
       }, {
         title: '门票价格',
         dataIndex: 'ticketPrice',
-        width: 100,
+        ellipsis: true,
         customRender: (text) => `¥${text}`
       }, {
         title: '核销码',
         dataIndex: 'checkCode',
-        width: 150,
         customRender: (text, record, index) => {
           if (!record.checkCode) return <a-avatar shape="square" icon="user" />
           return <a-popover>
@@ -247,12 +246,10 @@ export default {
       }, {
         title: '是否已核销',
         dataIndex: 'isChecked',
-        width: 100,
         customRender: (text) => text == 1 ? '是' : '否'
       }, {
         title: '支付状态',
         dataIndex: 'paymentStatus',
-        width: 100,
         customRender: (text) => {
           const statusMap = { 0: '待支付', 1: '已支付', 2: '已退款' }
           return statusMap[text] || '未知状态'
@@ -260,7 +257,7 @@ export default {
       }, {
         title: '创建时间',
         dataIndex: 'createdAt',
-        width: 150,
+        ellipsis: true,
         customRender: (text) => {
           if (text) {
             return text

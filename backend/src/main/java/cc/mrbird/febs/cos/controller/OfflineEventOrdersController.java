@@ -5,12 +5,14 @@ import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.OfflineEventOrders;
 import cc.mrbird.febs.cos.service.IOfflineEventOrdersService;
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -33,6 +35,33 @@ public class OfflineEventOrdersController {
     @GetMapping("/page")
     public R page(Page<OfflineEventOrders> page, OfflineEventOrders offlineEventOrders) {
         return R.ok(offlineEventOrdersService.queryPage(page, offlineEventOrders));
+    }
+
+    /**
+     * 获取订单详情
+     *
+     * @param orderCode 订单ID
+     * @return 详情
+     */
+    @GetMapping("/queryOrderDetail")
+    public R queryScenicOrderDetail(String orderCode) {
+        LinkedHashMap<String, Object> result = new LinkedHashMap<String, Object>() {
+            {
+                put("data", offlineEventOrdersService.queryOrderDetailByCode(orderCode));
+            }
+        };
+        return R.ok(result);
+    }
+
+    /**
+     * 核销订单
+     *
+     * @param orderCode 订单编号
+     * @return 结果
+     */
+    @GetMapping("/verifyOrder")
+    public R verifyOrder(String orderCode) {
+        return R.ok(offlineEventOrdersService.update(Wrappers.<OfflineEventOrders>lambdaUpdate().set(OfflineEventOrders::getIsChecked, "1").eq(OfflineEventOrders::getOrderSn, orderCode)));
     }
 
     /**
