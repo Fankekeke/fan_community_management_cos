@@ -1,15 +1,22 @@
 package cc.mrbird.febs.cos.controller;
 
 
+import cc.mrbird.febs.common.utils.AddressUtil;
+import cc.mrbird.febs.common.utils.HttpContextUtil;
+import cc.mrbird.febs.common.utils.IPUtil;
 import cc.mrbird.febs.common.utils.R;
 import cc.mrbird.febs.cos.entity.OnlineEventLogs;
+import cc.mrbird.febs.cos.entity.UserInfo;
 import cc.mrbird.febs.cos.service.IOnlineEventLogsService;
+import cc.mrbird.febs.cos.service.IUserInfoService;
 import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +29,8 @@ import java.util.List;
 public class OnlineEventLogsController {
 
     private final IOnlineEventLogsService onlineEventLogsService;
+
+    private final IUserInfoService userInfoService;
 
     /**
      * 根据分页和筛选条件获取线上活动访问信息
@@ -64,8 +73,25 @@ public class OnlineEventLogsController {
      */
     @PostMapping
     public R save(OnlineEventLogs onlineEventLogs) {
+        UserInfo userInfo = userInfoService.getOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUserId, onlineEventLogs.getUserId()));
+        onlineEventLogs.setUserId(userInfo.getId());
         onlineEventLogs.setEnterTime(DateUtil.formatDateTime(new Date()));
-        return R.ok(onlineEventLogsService.save(onlineEventLogs));
+        HttpServletRequest request = HttpContextUtil.getHttpServletRequest();
+        String ip = IPUtil.getIpAddr(request);
+        onlineEventLogs.setIpAddress(AddressUtil.getCityInfo(ip));
+        onlineEventLogsService.save(onlineEventLogs);
+        return R.ok(onlineEventLogs.getId());
+    }
+
+    /**
+     * 获取线上活动访问信息占比
+     *
+     * @param eventId 活动ID
+     * @return 占比
+     */
+    @GetMapping("/query-rate-by-event/{eventId}")
+    public R queryRateByEvent(Integer eventId) {
+        return R.ok(onlineEventLogsService.queryRateByEvent(eventId));
     }
 
     /**
@@ -76,6 +102,7 @@ public class OnlineEventLogsController {
      */
     @PutMapping
     public R edit(OnlineEventLogs onlineEventLogs) {
+        onlineEventLogs.setLeaveTime(DateUtil.formatDateTime(new Date()));
         return R.ok(onlineEventLogsService.updateById(onlineEventLogs));
     }
 

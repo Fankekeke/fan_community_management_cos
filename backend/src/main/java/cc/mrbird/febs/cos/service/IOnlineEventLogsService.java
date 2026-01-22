@@ -20,4 +20,12 @@ public interface IOnlineEventLogsService extends IService<OnlineEventLogs> {
      * @return 结果
      */
     IPage<LinkedHashMap<String, Object>> queryPage(Page<OnlineEventLogs> page, OnlineEventLogs onlineEventLogs);
+
+    /**
+     * 获取线上活动访问信息占比
+     *
+     * @param eventId 活动ID
+     * @return 结果
+     */
+    LinkedHashMap<String, Object> queryRateByEvent(Integer eventId);
 }
